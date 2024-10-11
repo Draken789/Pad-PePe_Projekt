@@ -5,13 +5,15 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <MenuBar>
         <menus>
@@ -20,46 +22,79 @@
               <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Filters">
             <items>
               <MenuItem mnemonicParsing="false" text="Delete" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
+          <Menu mnemonicParsing="false" text="About">
             <items>
               <MenuItem mnemonicParsing="false" text="About" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Exit">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="About" />
+               </items>
+            </Menu>
         </menus>
       </MenuBar>
       <HBox alignment="TOP_RIGHT" prefHeight="141.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
          <children>
-            <VBox alignment="TOP_CENTER" prefHeight="375.0" prefWidth="119.0">
+            <VBox alignment="TOP_CENTER" prefHeight="515.0" prefWidth="150.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Select Image File">
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="185.0" text="Select Image File">
                      <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
                      </VBox.margin>
-                     <font>
-                        <Font size="11.0" />
-                     </font>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Edit Matrix">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
+                  <Button layoutX="15.0" layoutY="15.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="185.0" text="Edit Matrix">
+                     <VBox.margin>
+                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
+                     </VBox.margin>
                   </Button>
                    <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true">
                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
                        </VBox.margin>
                        <Image url="@img/black.jpg" />
                    </ImageView>
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Apply Matrix Filter">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="185.0" text="Apply Matrix Filter">
+                     <VBox.margin>
+                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
+                     </VBox.margin>
                   </Button>
+                  <TextArea editable="false" prefHeight="0.0" prefWidth="150.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                  <Button minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Generate Image">
+                     <VBox.margin>
+                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
+                     </VBox.margin>
+                  </Button>
+                  <Button minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Restore Original Image">
+                     <VBox.margin>
+                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
+                     </VBox.margin>
+                  </Button>
+                  <VBox prefHeight="0.0" prefWidth="139.0">
+                     <children>
+                        <RadioButton mnemonicParsing="false" selected="true" text="Original Image" VBox.vgrow="NEVER">
+                           <VBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </VBox.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="radioImageOptions" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="Modified Image" toggleGroup="$radioImageOptions">
+                           <VBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </VBox.margin>
+                        </RadioButton>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="2.5" left="5.0" right="5.0" top="10.0" />
+                     </VBox.margin>
+                  </VBox>
                </children>
             </VBox>
          </children>
