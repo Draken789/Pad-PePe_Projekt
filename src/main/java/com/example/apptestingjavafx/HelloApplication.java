@@ -20,6 +20,11 @@ public class HelloApplication extends Application {
         stage.setMaximized(true);
     }
 
+    @Override
+    public void init() throws Exception {
+
+    }
+
     public static void main(String[] args) {
         launch();
     }
