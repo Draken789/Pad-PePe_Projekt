@@ -51,9 +51,9 @@
                   </Button>
                    <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true">
                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                        </VBox.margin>
-                       <Image url="@../../../../../../../../Pictures/JavaFXProjectImages/A_black_image.jpg"/>
+                       <Image url="@img/black.jpg" />
                    </ImageView>
                   <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Apply Matrix Filter">
                      <font>
