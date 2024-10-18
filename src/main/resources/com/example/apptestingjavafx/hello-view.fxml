@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.apptestingjavafx.HelloController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <MenuBar>
         <menus>
@@ -41,9 +41,21 @@
       </MenuBar>
       <HBox alignment="TOP_RIGHT" prefHeight="141.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
          <children>
+            <HBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="515.0" prefWidth="812.0" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/black.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
             <VBox alignment="TOP_CENTER" prefHeight="515.0" prefWidth="150.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#onSelectImage" prefHeight="25.0" prefWidth="185.0" text="Select Image File">
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="185.0" text="Select Image File">
                      <VBox.margin>
                         <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
                      </VBox.margin>

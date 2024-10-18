@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.io.File;
 
 public class HelloController {
@@ -18,7 +19,7 @@ public class HelloController {
 
     @FXML
     protected void onSelectImage() {
-        System.out.println(45);
+        OpenFileViaExplorer();
     }
 
     public static boolean OpenFileViaExplorer() {
@@ -29,6 +30,10 @@ public class HelloController {
             fileChooser.setCurrentDirectory(new File("."));
             int result = fileChooser.showOpenDialog(null);
             System.out.println("Result: " + result);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                System.out.println("Filepath: " + selectedFile);
+            }
         }
         catch (Exception e) {
             System.out.println(e);
