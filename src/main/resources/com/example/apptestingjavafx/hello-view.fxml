@@ -10,6 +10,7 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -19,7 +20,8 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" text="Load Image" />
+                  <MenuItem mnemonicParsing="false" onAction="#onSaveImage" text="Save Image" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Filters">
@@ -39,18 +41,22 @@
             </Menu>
         </menus>
       </MenuBar>
-      <HBox alignment="TOP_RIGHT" prefHeight="141.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+      <HBox prefHeight="141.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
          <children>
-            <HBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="515.0" prefWidth="812.0" HBox.hgrow="ALWAYS">
+            <HBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="515.0" prefWidth="139.0" HBox.hgrow="SOMETIMES">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
                <children>
-                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@img/black.jpg" />
-                     </image>
-                  </ImageView>
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseMoved="#onImageDrag" onMousePressed="#onImageDragStart" onMouseReleased="#onImageDragStop" prefHeight="515.0" prefWidth="821.0">
+                     <children>
+                        <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" onMouseDragged="#onImageDrag" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@img/black.jpg" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
                </children>
             </HBox>
             <VBox alignment="TOP_CENTER" prefHeight="515.0" prefWidth="150.0">
