@@ -31,7 +31,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="About">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="About program"/>
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Exit">

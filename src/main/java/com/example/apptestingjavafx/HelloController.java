@@ -41,6 +41,35 @@ public class HelloController {
         if (!_drag) return;
         imageView.setTranslateX(_dragOX + ev.getScreenX() - _dragX);
         imageView.setTranslateY(_dragOY + ev.getScreenY() - _dragY);
+
+        // Calculate new position
+        double newTranslateX = _dragOX + ev.getScreenX() - _dragX;
+        double newTranslateY = _dragOY + ev.getScreenY() - _dragY;
+
+        // Get window boundaries
+        double windowWidth = imageView.getScene().getWidth();
+        double windowHeight = imageView.getScene().getHeight();
+
+        // Get image dimensions
+        double imageWidth = imageView.getBoundsInParent().getWidth();
+        double imageHeight = imageView.getBoundsInParent().getHeight();
+
+        // Clamp the new position to prevent moving outside the window
+        if (newTranslateX < 0) {
+            newTranslateX = 0;
+        } else if (newTranslateX + imageWidth > windowWidth) {
+            newTranslateX = windowWidth - imageWidth;
+        }
+
+        if (newTranslateY < 0) {
+            newTranslateY = 0;
+        } else if (newTranslateY + imageHeight > windowHeight) {
+            newTranslateY = windowHeight - imageHeight;
+        }
+
+        // Set the new constrained position
+        imageView.setTranslateX(newTranslateX);
+        imageView.setTranslateY(newTranslateY);
     }
 
     @FXML
