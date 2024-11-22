@@ -98,14 +98,25 @@ public class HelloController {
 
         if (file != null) {
             try {
+                // Get the current image from the ImageView
                 Image imageToBeSaved = imageView.getImage();
+
+                // Create a WritableImage matching the size of the original image
                 WritableImage writableImage = new WritableImage((int) imageToBeSaved.getWidth(), (int) imageToBeSaved.getHeight());
+
+                // Snapshot the ImageView content to the WritableImage
                 imageView.snapshot(null, writableImage);
-                File outputFile = new File(file.getAbsolutePath());
-                // finish this part
-            }
-            catch (Exception ex) {
-                System.out.println("Chyba při ukládání obrázku: " + ex.getMessage());
+
+                // Convert WritableImage to BufferedImage
+                BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null);
+
+                // Write the BufferedImage to the chosen file
+                ImageIO.write(bufferedImage, "png", file);
+
+                System.out.println("Image saved successfully to " + file.getAbsolutePath());
+            } catch (Exception ex) {
+                System.out.println("Error while saving the image: " + ex.getMessage());
+                ex.printStackTrace();
             }
         }
     }
