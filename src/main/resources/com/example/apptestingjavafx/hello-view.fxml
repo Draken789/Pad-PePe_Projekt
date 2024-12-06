@@ -43,7 +43,7 @@
       </MenuBar>
       <HBox prefHeight="141.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
          <children>
-            <HBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="515.0" prefWidth="139.0" HBox.hgrow="SOMETIMES">
+            <HBox fx:id="heightBoxViewPortImage" nodeOrientation="LEFT_TO_RIGHT" prefHeight="515.0" prefWidth="139.0" HBox.hgrow="SOMETIMES">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -58,7 +58,7 @@
                   </AnchorPane>
                </children>
             </HBox>
-            <VBox alignment="TOP_CENTER" prefHeight="515.0" prefWidth="150.0">
+            <VBox fx:id="vBoxRightOptions" alignment="TOP_CENTER" prefHeight="515.0" prefWidth="150.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#onSelectImage" prefHeight="25.0" prefWidth="185.0" text="Select Image File">
                      <VBox.margin>

@@ -14,8 +14,11 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.Console;
 import java.io.File;
@@ -30,6 +33,12 @@ public class HelloController {
 
     @FXML
     private AnchorPane anchorPane;
+
+    @FXML
+    private VBox vBoxRightOptions;
+
+    @FXML
+    private HBox heightBoxViewPortImage;
 
     public void initialize() {
         System.out.println();
@@ -60,17 +69,18 @@ public class HelloController {
         double imageWidth = imageView.getBoundsInParent().getWidth();
         double imageHeight = imageView.getBoundsInParent().getHeight();
 
+        double menuHeight = windowHeight - heightBoxViewPortImage.getHeight();
         // Clamp the new position to prevent moving outside the window
         if (newTranslateX < 0) {
             newTranslateX = 0;
-        } else if (newTranslateX + imageWidth > windowWidth) {
-            newTranslateX = windowWidth - imageWidth;
+        } else if (newTranslateX + imageWidth > windowWidth - vBoxRightOptions.getWidth()) {
+            newTranslateX = windowWidth - vBoxRightOptions.getWidth() - imageWidth;
         }
 
         if (newTranslateY < 0) {
             newTranslateY = 0;
-        } else if (newTranslateY + imageHeight > windowHeight) {
-            newTranslateY = windowHeight - imageHeight;
+        } else if (newTranslateY + imageHeight > windowHeight - menuHeight) {
+            newTranslateY = windowHeight - menuHeight - imageHeight;
         }
 
         // Set the new constrained position
