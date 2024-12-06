@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 
 import java.awt.image.BufferedImage;
@@ -27,8 +28,13 @@ public class HelloController {
     @FXML
     private ImageView imageView;
 
+    @FXML
+    private AnchorPane anchorPane;
+
     public void initialize() {
         System.out.println();
+        //imageView.fitWidthProperty().bind(anchorPane.widthProperty());
+        //imageView.fitHeightProperty().bind(anchorPane.heightProperty());
     }
 
     @FXML
@@ -124,26 +130,35 @@ public class HelloController {
     public static boolean OpenFileViaExplorer(ImageView imageView) {
         try {
             JFileChooser fileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Image files", "png", "jpg");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Image files", "png", "jpg", "jpeg", "bmp", "gif");
             fileChooser.setFileFilter(filter);
             fileChooser.setCurrentDirectory(new File("."));
             int result = fileChooser.showOpenDialog(null);
-            System.out.println("Result: " + result);
+
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 System.out.println("Filepath: " + selectedFile);
+
+                // Load the image into the JavaFX ImageView
                 Image image = new Image(selectedFile.toURI().toString());
                 imageView.setImage(image);
-                imageView.setFitWidth(image.getWidth());
-                if (imageView.getFitWidth() < image.getWidth() ) {
-                    imageView.setFitHeight(image.getHeight())
-                }
-                imageView.setFitHeight(image.getHeight());
+
+                // Preserve aspect ratio
+                imageView.setPreserveRatio(true);
+
+                // Get the parent node's width and height
+                double parentWidth = imageView.getParent().getLayoutBounds().getWidth();
+                double parentHeight = imageView.getParent().getLayoutBounds().getHeight();
+
+                // Set the ImageView's width and height to match the parent container's
+                imageView.setFitWidth(parentWidth);
+                imageView.setFitHeight(parentHeight);
+
                 return true;
             }
-        }
-        catch (Exception e) {
-            System.out.println(e);
+        } catch (Exception e) {
+            System.out.println("Error loading image: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
 
