@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.apptestingjavafx.HelloController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.apptestingjavafx.HelloController">
    <children>
       <MenuBar>
         <menus>
@@ -31,7 +31,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="About">
             <items>
-              <MenuItem mnemonicParsing="false" text="About program"/>
+              <MenuItem mnemonicParsing="false" text="About program" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Exit">
@@ -50,11 +50,7 @@
                <children>
                   <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseMoved="#onImageDrag" onMousePressed="#onImageDragStart" onMouseReleased="#onImageDragStop" prefHeight="515.0" prefWidth="821.0">
                      <children>
-                        <ImageView fx:id="imageView" fitHeight="150.0" fitWidth="200.0" onMouseDragged="#onImageDrag" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@img/black.jpg" />
-                           </image>
-                        </ImageView>
+                        <ImageView fx:id="imageView" fitHeight="514.0" fitWidth="810.0" onMouseDragged="#onImageDrag" pickOnBounds="true" preserveRatio="true" />
                      </children>
                   </AnchorPane>
                </children>

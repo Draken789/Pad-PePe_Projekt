@@ -134,6 +134,11 @@ public class HelloController {
                 System.out.println("Filepath: " + selectedFile);
                 Image image = new Image(selectedFile.toURI().toString());
                 imageView.setImage(image);
+                imageView.setFitWidth(image.getWidth());
+                if (imageView.getFitWidth() < image.getWidth() ) {
+                    imageView.setFitHeight(image.getHeight())
+                }
+                imageView.setFitHeight(image.getHeight());
                 return true;
             }
         }
