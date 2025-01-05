@@ -1,38 +1,39 @@
 package com.example.apptestingjavafx;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.Console;
 import java.io.File;
-import java.io.IOException;
+
+//about dialog imports
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.stage.Modality;
+
 
 public class HelloController {
-    private double _dragX, _dragOX, _dragY, _dragOY;
-    private boolean _drag;
+    private double dragStartX, dragStartY;
+    private double originalX, originalY;
+    private boolean isDragging = false;
 
     @FXML
     private ImageView imageView;
 
     @FXML
-    private AnchorPane anchorPane;
+    private Pane imageContainer;
 
     @FXML
     private VBox vBoxRightOptions;
@@ -40,72 +41,75 @@ public class HelloController {
     @FXML
     private HBox heightBoxViewPortImage;
 
-    public void initialize() {
-        System.out.println();
-        //imageView.fitWidthProperty().bind(anchorPane.widthProperty());
-        //imageView.fitHeightProperty().bind(anchorPane.heightProperty());
-    }
-
     @FXML
-    protected void onSelectImage() {
-        OpenFileViaExplorer(imageView);
-    }
+    protected void onImageDrag(MouseEvent event) {
+        if (!isDragging) return;
 
-    @FXML
-    protected void onImageDrag(MouseEvent ev) {
-        if (!_drag) return;
-        imageView.setTranslateX(_dragOX + ev.getScreenX() - _dragX);
-        imageView.setTranslateY(_dragOY + ev.getScreenY() - _dragY);
+        double deltaX = event.getSceneX() - dragStartX;
+        double deltaY = event.getSceneY() - dragStartY;
 
-        // Calculate new position
-        double newTranslateX = _dragOX + ev.getScreenX() - _dragX;
-        double newTranslateY = _dragOY + ev.getScreenY() - _dragY;
+        double newX = originalX + deltaX;
+        double newY = originalY + deltaY;
 
-        // Get window boundaries
-        double windowWidth = imageView.getScene().getWidth();
-        double windowHeight = imageView.getScene().getHeight();
+        // Get container boundaries
+        double containerWidth = imageContainer.getWidth();
+        double containerHeight = imageContainer.getHeight();
 
         // Get image dimensions
-        double imageWidth = imageView.getBoundsInParent().getWidth();
-        double imageHeight = imageView.getBoundsInParent().getHeight();
+        double imageWidth = imageView.getFitWidth();
+        double imageHeight = imageView.getFitHeight();
 
-        double menuHeight = windowHeight - heightBoxViewPortImage.getHeight();
-        // Clamp the new position to prevent moving outside the window
-        if (newTranslateX < 0) {
-            newTranslateX = 0;
-        } else if (newTranslateX + imageWidth > windowWidth - vBoxRightOptions.getWidth()) {
-            newTranslateX = windowWidth - vBoxRightOptions.getWidth() - imageWidth;
-        }
+        // Constrain movement within container bounds
+        newX = Math.max(0, Math.min(newX, containerWidth - imageWidth));
+        newY = Math.max(0, Math.min(newY, containerHeight - imageHeight));
 
-        if (newTranslateY < 0) {
-            newTranslateY = 0;
-        } else if (newTranslateY + imageHeight > windowHeight - menuHeight) {
-            newTranslateY = windowHeight - menuHeight - imageHeight;
-        }
-
-        // Set the new constrained position
-        imageView.setTranslateX(newTranslateX);
-        imageView.setTranslateY(newTranslateY);
+        imageView.setLayoutX(newX);
+        imageView.setLayoutY(newY);
     }
 
     @FXML
-    protected void onImageDragStart(MouseEvent ev) {
-        if (!ev.isPrimaryButtonDown()) return;
-        _dragX = ev.getScreenX();
-        _dragY = ev.getScreenY();
-        _dragOX = imageView.getTranslateX();
-        _dragOY = imageView.getTranslateY();
-        _drag = true;
+    protected void onImageDragStart(MouseEvent event) {
+        if (!event.isPrimaryButtonDown()) return;
+
+        dragStartX = event.getSceneX();
+        dragStartY = event.getSceneY();
+        originalX = imageView.getLayoutX();
+        originalY = imageView.getLayoutY();
+        isDragging = true;
+
+        event.consume();
     }
 
     @FXML
-    protected void onImageDragStop(MouseEvent ev) {
-        _drag = false;
+    protected void onImageDragStop(MouseEvent event) {
+        isDragging = false;
+        event.consume();
+    }
+
+    @FXML
+    protected void onAboutClick() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("about-dialog.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 300, 200);
+            Stage stage = new Stage();
+            stage.setTitle("About");
+            stage.setScene(scene);
+
+            // Set the window to be modal (blocks input to other windows)
+            stage.initModality(Modality.APPLICATION_MODAL);
+
+            // Set the window to be non-resizable
+            stage.setResizable(false);
+
+            stage.show();
+        } catch (Exception e) {
+            System.out.println("Error opening about dialog: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
     protected void onSaveImage() {
-        System.out.println("save image");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save image");
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
@@ -114,19 +118,14 @@ public class HelloController {
 
         if (file != null) {
             try {
-                // Get the current image from the ImageView
                 Image imageToBeSaved = imageView.getImage();
+                WritableImage writableImage = new WritableImage(
+                        (int) imageToBeSaved.getWidth(),
+                        (int) imageToBeSaved.getHeight()
+                );
 
-                // Create a WritableImage matching the size of the original image
-                WritableImage writableImage = new WritableImage((int) imageToBeSaved.getWidth(), (int) imageToBeSaved.getHeight());
-
-                // Snapshot the ImageView content to the WritableImage
                 imageView.snapshot(null, writableImage);
-
-                // Convert WritableImage to BufferedImage
                 BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null);
-
-                // Write the BufferedImage to the chosen file
                 ImageIO.write(bufferedImage, "png", file);
 
                 System.out.println("Image saved successfully to " + file.getAbsolutePath());
@@ -137,41 +136,83 @@ public class HelloController {
         }
     }
 
+    @FXML
+    protected void onSelectImage() {
+        if (OpenFileViaExplorer(imageView)) {
+            // Reset position to top-left corner
+            imageView.setLayoutX(0);
+            imageView.setLayoutY(0);
+
+            // Add listener to image loading
+            imageView.imageProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    Platform.runLater(this::resizeImage);
+                }
+            });
+        }
+    }
+
+    private void resizeImage() {
+        if (imageView.getImage() != null) {
+            double containerWidth = imageContainer.getWidth() - 20;
+            double containerHeight = imageContainer.getHeight() - 20;
+
+            double imageWidth = imageView.getImage().getWidth();
+            double imageHeight = imageView.getImage().getHeight();
+
+            double widthRatio = containerWidth / imageWidth;
+            double heightRatio = containerHeight / imageHeight;
+            double scale = Math.min(widthRatio, heightRatio);
+            scale = Math.min(scale, 1.0);
+
+            imageView.setFitWidth(imageWidth * scale);
+            imageView.setFitHeight(imageHeight * scale);
+
+            // Position image in top-left corner
+            imageView.setLayoutX(0);
+            imageView.setLayoutY(0);
+        }
+    }
+
+    public void initialize() {
+        // Add listeners for container size changes
+        imageContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (imageView.getImage() != null) {
+                Platform.runLater(this::resizeImage);
+            }
+        });
+
+        imageContainer.heightProperty().addListener((obs, oldVal, newVal) -> {
+            if (imageView.getImage() != null) {
+                Platform.runLater(this::resizeImage);
+            }
+        });
+
+        imageView.imageProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                Platform.runLater(this::resizeImage);
+            }
+        });
+    }
+
     public static boolean OpenFileViaExplorer(ImageView imageView) {
         try {
             JFileChooser fileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Image files", "png", "jpg", "jpeg", "bmp", "gif");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Image files", "png", "jpg", "jpeg", "bmp", "gif");
             fileChooser.setFileFilter(filter);
             fileChooser.setCurrentDirectory(new File("."));
-            int result = fileChooser.showOpenDialog(null);
 
-            if (result == JFileChooser.APPROVE_OPTION) {
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                System.out.println("Filepath: " + selectedFile);
-
-                // Load the image into the JavaFX ImageView
                 Image image = new Image(selectedFile.toURI().toString());
                 imageView.setImage(image);
-
-                // Preserve aspect ratio
-                imageView.setPreserveRatio(true);
-
-                // Get the parent node's width and height
-                double parentWidth = imageView.getParent().getLayoutBounds().getWidth();
-                double parentHeight = imageView.getParent().getLayoutBounds().getHeight();
-
-                // Set the ImageView's width and height to match the parent container's
-                imageView.setFitWidth(parentWidth);
-                imageView.setFitHeight(parentHeight);
-
                 return true;
             }
         } catch (Exception e) {
             System.out.println("Error loading image: " + e.getMessage());
             e.printStackTrace();
-            return false;
         }
-
         return false;
     }
 }

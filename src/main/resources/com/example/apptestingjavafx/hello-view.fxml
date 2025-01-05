@@ -8,113 +8,93 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.apptestingjavafx.HelloController">
-   <children>
-      <MenuBar>
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Load Image" />
-                  <MenuItem mnemonicParsing="false" onAction="#onSaveImage" text="Save Image" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Filters">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="About">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About program" />
-            </items>
-          </Menu>
-            <Menu mnemonicParsing="false" text="Exit">
-               <items>
-                  <MenuItem mnemonicParsing="false" text="About" />
-               </items>
-            </Menu>
-        </menus>
-      </MenuBar>
-      <HBox prefHeight="141.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
-         <children>
-            <HBox fx:id="heightBoxViewPortImage" nodeOrientation="LEFT_TO_RIGHT" prefHeight="515.0" prefWidth="139.0" HBox.hgrow="SOMETIMES">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-               <children>
-                  <AnchorPane fx:id="anchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseMoved="#onImageDrag" onMousePressed="#onImageDragStart" onMouseReleased="#onImageDragStop" prefHeight="1080.0" prefWidth="1920.0">
-                     <children>
-                        <ImageView fx:id="imageView" onMouseDragged="#onImageDrag" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </AnchorPane>
-               </children>
-            </HBox>
-            <VBox fx:id="vBoxRightOptions" alignment="TOP_CENTER" prefHeight="515.0" prefWidth="150.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#onSelectImage" prefHeight="25.0" prefWidth="185.0" text="Select Image File">
-                     <VBox.margin>
-                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
-                     </VBox.margin>
-                  </Button>
-                  <Button layoutX="15.0" layoutY="15.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="185.0" text="Edit Matrix">
-                     <VBox.margin>
-                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
-                     </VBox.margin>
-                  </Button>
-                   <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true">
-                       <VBox.margin>
-                           <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
-                       </VBox.margin>
-                       <Image url="@img/black.jpg" />
-                   </ImageView>
-                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="185.0" text="Apply Matrix Filter">
-                     <VBox.margin>
-                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
-                     </VBox.margin>
-                  </Button>
-                  <TextArea editable="false" prefHeight="0.0" prefWidth="150.0" wrapText="true" VBox.vgrow="ALWAYS" />
-                  <Button minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Generate Image">
-                     <VBox.margin>
-                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
-                     </VBox.margin>
-                  </Button>
-                  <Button minHeight="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="185.0" text="Restore Original Image">
-                     <VBox.margin>
-                        <Insets bottom="2.5" left="5.0" right="5.0" top="2.5" />
-                     </VBox.margin>
-                  </Button>
-                  <VBox prefHeight="0.0" prefWidth="139.0">
-                     <children>
-                        <RadioButton mnemonicParsing="false" selected="true" text="Original Image" VBox.vgrow="NEVER">
-                           <VBox.margin>
-                              <Insets bottom="5.0" top="5.0" />
-                           </VBox.margin>
-                           <toggleGroup>
-                              <ToggleGroup fx:id="radioImageOptions" />
-                           </toggleGroup>
-                        </RadioButton>
-                        <RadioButton mnemonicParsing="false" text="Modified Image" toggleGroup="$radioImageOptions">
-                           <VBox.margin>
-                              <Insets bottom="5.0" top="5.0" />
-                           </VBox.margin>
-                        </RadioButton>
-                     </children>
-                     <VBox.margin>
-                        <Insets bottom="2.5" left="5.0" right="5.0" top="10.0" />
-                     </VBox.margin>
-                  </VBox>
-               </children>
-            </VBox>
-         </children>
-      </HBox>
-   </children>
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.apptestingjavafx.HelloController">
+    <children>
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onSelectImage" text="Load Image" />
+                        <MenuItem mnemonicParsing="false" onAction="#onSaveImage" text="Save Image" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Filters">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="About" onAction="#onAboutClick" />
+                <Menu mnemonicParsing="false" text="Exit">
+                </Menu>
+            </menus>
+        </MenuBar>
+        <BorderPane VBox.vgrow="ALWAYS">
+            <center>
+                <Pane fx:id="imageContainer" style="-fx-background-color: #F5F5F5;" BorderPane.alignment="CENTER">
+                    <children>
+                        <ImageView fx:id="imageView" onMouseDragged="#onImageDrag" onMousePressed="#onImageDragStart" onMouseReleased="#onImageDragStop" preserveRatio="true" />
+                    </children>
+                </Pane>
+            </center>
+            <right>
+                <VBox fx:id="vBoxRightOptions" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" style="-fx-background-color: #F0F0F0;" BorderPane.alignment="CENTER">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                    <children>
+                        <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#onSelectImage" text="Select Image File">
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button maxWidth="Infinity" mnemonicParsing="false" text="Edit Matrix">
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </Button>
+                        <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true">
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </ImageView>
+                        <Button maxWidth="Infinity" mnemonicParsing="false" text="Apply Matrix Filter">
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </Button>
+                        <TextArea editable="false" wrapText="true" VBox.vgrow="ALWAYS">
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </TextArea>
+                        <Button maxWidth="Infinity" mnemonicParsing="false" text="Generate Image">
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button maxWidth="Infinity" mnemonicParsing="false" text="Restore Original Image">
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </Button>
+                        <VBox spacing="5.0">
+                            <children>
+                                <RadioButton mnemonicParsing="false" selected="true" text="Original Image">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="radioImageOptions" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton mnemonicParsing="false" text="Modified Image" toggleGroup="$radioImageOptions" />
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </right>
+        </BorderPane>
+    </children>
 </VBox>
