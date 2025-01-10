@@ -2,6 +2,7 @@ package com.example.apptestingjavafx;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -10,6 +11,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.event.ActionEvent;
+
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -87,10 +90,21 @@ public class HelloController {
     }
 
     @FXML
+    protected void onExitClick(ActionEvent event) {
+        System.out.println("exit");
+        javafx.stage.Window.getWindows().stream()
+                .filter(javafx.stage.Window::isShowing)
+                .findFirst()
+                .map(window -> (Stage) window)
+                .ifPresent(window -> window.close());
+    }
+
+    @FXML
     protected void onAboutClick() {
         try {
+            System.out.println("ajsdsakjd");
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("about-dialog.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 300, 200);
+            Scene scene = new Scene(fxmlLoader.load(), 400, 200);
             Stage stage = new Stage();
             stage.setTitle("About");
             stage.setScene(scene);
@@ -100,6 +114,14 @@ public class HelloController {
 
             // Set the window to be non-resizable
             stage.setResizable(false);
+            stage.setX(0);
+            stage.setY(2);
+
+            // this will be displayed after the window is rendered
+            Platform.runLater(() -> {
+                stage.setOpacity(1.0);
+                stage.toFront();
+            });
 
             stage.show();
         } catch (Exception e) {
@@ -111,7 +133,7 @@ public class HelloController {
     @FXML
     protected void onSaveImage() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save image");
+        fileChooser.setTitle("Save Image");
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
         fileChooser.getExtensionFilters().add(extFilter);
         File file = fileChooser.showSaveDialog(null);
@@ -119,13 +141,14 @@ public class HelloController {
         if (file != null) {
             try {
                 Image imageToBeSaved = imageView.getImage();
-                WritableImage writableImage = new WritableImage(
-                        (int) imageToBeSaved.getWidth(),
-                        (int) imageToBeSaved.getHeight()
-                );
+                if (imageToBeSaved == null) {
+                    System.out.println("No image loaded to save.");
+                    return;
+                }
 
-                imageView.snapshot(null, writableImage);
-                BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null);
+
+                BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(imageToBeSaved, null);
+
                 ImageIO.write(bufferedImage, "png", file);
 
                 System.out.println("Image saved successfully to " + file.getAbsolutePath());
@@ -135,6 +158,7 @@ public class HelloController {
             }
         }
     }
+
 
     @FXML
     protected void onSelectImage() {

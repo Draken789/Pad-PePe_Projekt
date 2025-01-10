@@ -13,6 +13,8 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
+<?import com.example.apptestingjavafx.ActionMenu?>
+<?import com.example.apptestingjavafx.ExitMenu?>
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.apptestingjavafx.HelloController">
     <children>
         <MenuBar>
@@ -28,9 +30,8 @@
                         <MenuItem mnemonicParsing="false" text="Delete" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="About" onAction="#onAboutClick" />
-                <Menu mnemonicParsing="false" text="Exit">
-                </Menu>
+                <ActionMenu mnemonicParsing="false" text="About" onMenuAction="#onAboutClick" />
+                <ActionMenu mnemonicParsing="false" text="Exit" onMenuAction="#onExitClick" />
             </menus>
         </MenuBar>
         <BorderPane VBox.vgrow="ALWAYS">
