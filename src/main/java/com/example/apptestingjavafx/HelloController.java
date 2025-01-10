@@ -298,7 +298,7 @@ public class HelloController {
                 Platform.runLater(this::resizeImage);
             }
         });
-
+        addMessageInTextArea("Application started successfully.");
     }
 
 
@@ -339,7 +339,7 @@ public class HelloController {
         }
 
         imageView.setImage(invertedImage);
-        addMessageInTextArea("Image colors inverted");
+        addMessageInTextArea("Image colors inverted.");
         System.out.println("Image colors inverted.");
     }
 
