@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.event.ActionEvent;
 
+import java.awt.*;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -24,6 +25,9 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import javafx.scene.control.TextArea;
+
 
 //about dialog imports
 import javafx.fxml.FXMLLoader;
@@ -33,6 +37,7 @@ import javafx.stage.Modality;
 
 
 public class HelloController {
+    private MessageHandler messageHandler;
     private double dragStartX, dragStartY;
     private double originalX, originalY;
     private boolean isDragging = false;
@@ -49,6 +54,24 @@ public class HelloController {
 
     @FXML
     private HBox heightBoxViewPortImage;
+
+    @FXML
+    private  TextArea messagesTextArea;
+
+    protected void setMessagesTextArea() {
+        ArrayList<String> messages = messageHandler.getMessages();
+        String text = "";
+
+        for (String message : messages) {
+            text += message + "\n";
+        }
+        messagesTextArea.setText(text);
+    }
+
+    protected void addMessageInTextArea(String text) {
+        messageHandler.addMessage(text);
+        setMessagesTextArea();
+    }
 
     /*                                                    MENU ITEM FILE                                   */
 
@@ -256,6 +279,7 @@ public class HelloController {
     }
 
     public void initialize() {
+        messageHandler = new MessageHandler();
         // Add listeners for container size changes
         imageContainer.widthProperty().addListener((obs, oldVal, newVal) -> {
             if (imageView.getImage() != null) {
@@ -274,6 +298,7 @@ public class HelloController {
                 Platform.runLater(this::resizeImage);
             }
         });
+
     }
 
 
@@ -314,6 +339,7 @@ public class HelloController {
         }
 
         imageView.setImage(invertedImage);
+        addMessageInTextArea("Image colors inverted");
         System.out.println("Image colors inverted.");
     }
 

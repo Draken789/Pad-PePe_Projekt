@@ -69,7 +69,7 @@
                                 <Insets bottom="5.0" />
                             </VBox.margin>
                         </Button>
-                        <TextArea editable="false" wrapText="true" VBox.vgrow="ALWAYS">
+                        <TextArea fx:id="messagesTextArea" editable="false" wrapText="true" VBox.vgrow="ALWAYS">
                             <VBox.margin>
                                 <Insets bottom="5.0" />
                             </VBox.margin>
