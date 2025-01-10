@@ -27,6 +27,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Filters">
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#onInvertColors" text="Invert Colors" />
                         <MenuItem mnemonicParsing="false" text="Delete" />
                     </items>
                 </Menu>
@@ -78,7 +79,7 @@
                                 <Insets bottom="5.0" />
                             </VBox.margin>
                         </Button>
-                        <Button maxWidth="Infinity" mnemonicParsing="false" text="Restore Original Image">
+                        <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#onRestoreOriginalImage" text="Restore Original Image">
                             <VBox.margin>
                                 <Insets bottom="10.0" />
                             </VBox.margin>

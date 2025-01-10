@@ -1,7 +1,11 @@
 package com.example.apptestingjavafx;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.event.ActionEvent;
 
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -31,6 +36,7 @@ public class HelloController {
     private double dragStartX, dragStartY;
     private double originalX, originalY;
     private boolean isDragging = false;
+    private Image originalImage;
 
     @FXML
     private ImageView imageView;
@@ -43,6 +49,75 @@ public class HelloController {
 
     @FXML
     private HBox heightBoxViewPortImage;
+
+    /*                                                    MENU ITEM FILE                                   */
+
+    @FXML
+    protected void onSelectImage() {
+        if (OpenFileViaExplorer(imageView)) {
+            // Save the original image
+            originalImage = imageView.getImage();
+            // Reset position to top-left corner
+            imageView.setLayoutX(0);
+            imageView.setLayoutY(0);
+
+            // Add listener to image loading
+            imageView.imageProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    Platform.runLater(this::resizeImage);
+                }
+            });
+        }
+    }
+    /*
+    @FXML
+    protected void onSaveImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save image");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                Image imageToBeSaved = imageView.getImage();
+                WritableImage writableImage = new WritableImage(
+                        (int) imageToBeSaved.getWidth(),
+                        (int) imageToBeSaved.getHeight()
+                );
+
+                imageView.snapshot(null, writableImage);
+                BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null);
+                ImageIO.write(bufferedImage, "png", file);
+
+                System.out.println("Image saved successfully to " + file.getAbsolutePath());
+            } catch (Exception ex) {
+                System.out.println("Error while saving the image: " + ex.getMessage());
+                ex.printStackTrace();
+            }
+        }
+    }*/
+
+    public static boolean OpenFileViaExplorer(ImageView imageView) {
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Image files", "png", "jpg", "jpeg", "bmp", "gif");
+            fileChooser.setFileFilter(filter);
+            fileChooser.setCurrentDirectory(new File("."));
+
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                Image image = new Image(selectedFile.toURI().toString());
+                imageView.setImage(image);
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading image: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     @FXML
     protected void onImageDrag(MouseEvent event) {
@@ -88,6 +163,7 @@ public class HelloController {
         isDragging = false;
         event.consume();
     }
+/*                                           MENU ITEM ABOUT                  */
 
     @FXML
     protected void onExitClick(ActionEvent event) {
@@ -109,10 +185,8 @@ public class HelloController {
             stage.setTitle("About");
             stage.setScene(scene);
 
-            // Set the window to be modal (blocks input to other windows)
+            // Set the stage as modal and non-resizable
             stage.initModality(Modality.APPLICATION_MODAL);
-
-            // Set the window to be non-resizable
             stage.setResizable(false);
             stage.setX(0);
             stage.setY(2);
@@ -124,8 +198,8 @@ public class HelloController {
             });
 
             stage.show();
-        } catch (Exception e) {
-            System.out.println("Error opening about dialog: " + e.getMessage());
+        } catch (IOException e) {
+            // Handle any IO exceptions
             e.printStackTrace();
         }
     }
@@ -156,23 +230,6 @@ public class HelloController {
                 System.out.println("Error while saving the image: " + ex.getMessage());
                 ex.printStackTrace();
             }
-        }
-    }
-
-
-    @FXML
-    protected void onSelectImage() {
-        if (OpenFileViaExplorer(imageView)) {
-            // Reset position to top-left corner
-            imageView.setLayoutX(0);
-            imageView.setLayoutY(0);
-
-            // Add listener to image loading
-            imageView.imageProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal != null) {
-                    Platform.runLater(this::resizeImage);
-                }
-            });
         }
     }
 
@@ -219,24 +276,55 @@ public class HelloController {
         });
     }
 
-    public static boolean OpenFileViaExplorer(ImageView imageView) {
-        try {
-            JFileChooser fileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                    "Image files", "png", "jpg", "jpeg", "bmp", "gif");
-            fileChooser.setFileFilter(filter);
-            fileChooser.setCurrentDirectory(new File("."));
 
-            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                Image image = new Image(selectedFile.toURI().toString());
-                imageView.setImage(image);
-                return true;
-            }
-        } catch (Exception e) {
-            System.out.println("Error loading image: " + e.getMessage());
-            e.printStackTrace();
+/*                                                MENU ITEM FILTERS                                    */
+
+    @FXML
+    protected void onInvertColors() {
+        Image loadedImage = imageView.getImage();
+        if (loadedImage == null) {
+            System.out.println("No image loaded to invert colors.");
+            return;
         }
-        return false;
+
+        int width = (int) loadedImage.getWidth();
+        int height = (int) loadedImage.getHeight();
+        WritableImage invertedImage = new WritableImage(width, height);
+
+        var writer = invertedImage.getPixelWriter();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int argb = loadedImage.getPixelReader().getArgb(x, y);
+
+                // Extract color components
+                int alpha = (argb >> 24) & 0xFF;
+                int red = (argb >> 16) & 0xFF;
+                int green = (argb >> 8) & 0xFF;
+                int blue = argb & 0xFF;
+
+                // Invert color components
+                red = 255 - red;
+                green = 255 - green;
+                blue = 255 - blue;
+
+                // Set the inverted pixel
+                int invertedArgb = (alpha << 24) | (red << 16) | (green << 8) | blue;
+                writer.setArgb(x, y, invertedArgb);
+            }
+        }
+
+        imageView.setImage(invertedImage);
+        System.out.println("Image colors inverted.");
+    }
+
+    @FXML
+    protected void onRestoreOriginalImage() {
+        if (originalImage != null) {
+            imageView.setImage(originalImage);
+            System.out.println("Original image restored.");
+        } else {
+            System.out.println("No original image to restore.");
+        }
     }
 }
+
