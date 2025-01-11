@@ -7,13 +7,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.Node;
+import javafx.scene.image.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.event.ActionEvent;
 
@@ -21,10 +21,19 @@ import java.awt.*;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.ArrayList;
 import javafx.scene.control.TextArea;
 
@@ -41,7 +50,12 @@ public class HelloController {
     private double dragStartX, dragStartY;
     private double originalX, originalY;
     private boolean isDragging = false;
-    private Image originalImage;
+
+    private Image srcImg;
+    private WritableImage dstImg;
+    private int imgWidth;
+    private int imgHeight;
+    private Image origImg;
 
     @FXML
     private ImageView imageView;
@@ -54,6 +68,7 @@ public class HelloController {
 
     @FXML
     private HBox heightBoxViewPortImage;
+
 
     @FXML
     private  TextArea messagesTextArea;
@@ -71,75 +86,6 @@ public class HelloController {
     protected void addMessageInTextArea(String text) {
         messageHandler.addMessage(text);
         setMessagesTextArea();
-    }
-
-    /*                                                    MENU ITEM FILE                                   */
-
-    @FXML
-    protected void onSelectImage() {
-        if (OpenFileViaExplorer(imageView)) {
-            // Save the original image
-            originalImage = imageView.getImage();
-            // Reset position to top-left corner
-            imageView.setLayoutX(0);
-            imageView.setLayoutY(0);
-
-            // Add listener to image loading
-            imageView.imageProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal != null) {
-                    Platform.runLater(this::resizeImage);
-                }
-            });
-        }
-    }
-    /*
-    @FXML
-    protected void onSaveImage() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save image");
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
-        fileChooser.getExtensionFilters().add(extFilter);
-        File file = fileChooser.showSaveDialog(null);
-
-        if (file != null) {
-            try {
-                Image imageToBeSaved = imageView.getImage();
-                WritableImage writableImage = new WritableImage(
-                        (int) imageToBeSaved.getWidth(),
-                        (int) imageToBeSaved.getHeight()
-                );
-
-                imageView.snapshot(null, writableImage);
-                BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(writableImage, null);
-                ImageIO.write(bufferedImage, "png", file);
-
-                System.out.println("Image saved successfully to " + file.getAbsolutePath());
-            } catch (Exception ex) {
-                System.out.println("Error while saving the image: " + ex.getMessage());
-                ex.printStackTrace();
-            }
-        }
-    }*/
-
-    public static boolean OpenFileViaExplorer(ImageView imageView) {
-        try {
-            JFileChooser fileChooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                    "Image files", "png", "jpg", "jpeg", "bmp", "gif");
-            fileChooser.setFileFilter(filter);
-            fileChooser.setCurrentDirectory(new File("."));
-
-            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                Image image = new Image(selectedFile.toURI().toString());
-                imageView.setImage(image);
-                return true;
-            }
-        } catch (Exception e) {
-            System.out.println("Error loading image: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
     }
 
     @FXML
@@ -169,6 +115,62 @@ public class HelloController {
     }
 
     @FXML
+    protected void onGrayscale() {
+        var pr = srcImg.getPixelReader();
+        var pw = dstImg.getPixelWriter();
+        for (int x = 0; x < srcImg.getWidth(); x++) {
+            for (int y = 0; y < srcImg.getHeight(); y++) {
+                int argb = pr.getArgb(x, y);
+                int a = argb & 0xFF000000;
+                int r = (argb >> 16) & 0xff;
+                int g = (argb >> 8) & 0xff;
+                int b = argb & 0xff;
+                int v = (int)(0.21 * (double)r + 0.71 * (double)g + 0.07 * b);
+
+                //0.21 * (double)this.red + 0.71 * (double)this.green + 0.07 * (double)this.blue
+                pw.setArgb(x, y, a | (v << 16) | (v << 8) | v);
+
+            }
+        }
+        flushImage();
+    }
+
+    @FXML
+    protected void onUngrayscale() {
+        double coefR = 1/0.21;
+        double coefG = 1/0.71;
+        double coefB = 1/0.07;
+
+        var pr = srcImg.getPixelReader();
+        var pw = dstImg.getPixelWriter();
+        for (int x = 0; x < srcImg.getWidth(); x++) {
+            for (int y = 0; y < srcImg.getHeight(); y++) {
+                int argb = pr.getArgb(x, y);
+                int a = argb & 0xFF000000;
+                int v = argb & 0xFF;
+
+                //0.21 * (double)this.red + 0.71 * (double)this.green + 0.07 * (double)this.blue
+                pw.setArgb(x, y, a
+                        | (int)(coefR * (v << 16))
+                        | (int)(coefG * (v << 8))
+                        | (int)(coefB * v));
+
+            }
+        }
+        flushImage();
+    }
+
+    protected void flushImage() {
+        imageView.setImage(dstImg);
+        srcImg = dstImg;
+        dstImg = new WritableImage(imgWidth, imgHeight);
+    }
+
+    protected void blitImage() {
+        dstImg.getPixelWriter().setPixels(0, 0, imgWidth, imgHeight, srcImg.getPixelReader(), 0, 0);
+    }
+
+    @FXML
     protected void onImageDragStart(MouseEvent event) {
         if (!event.isPrimaryButtonDown()) return;
 
@@ -195,7 +197,7 @@ public class HelloController {
                 .filter(javafx.stage.Window::isShowing)
                 .findFirst()
                 .map(window -> (Stage) window)
-                .ifPresent(window -> window.close());
+                .ifPresent(Stage::close);
     }
 
     @FXML
@@ -256,6 +258,31 @@ public class HelloController {
         }
     }
 
+
+    @FXML
+    protected void onSelectImage() {
+        Image result = OpenFileViaExplorer();
+        if (result != null) {
+            imgWidth = (int) result.getWidth();
+            imgHeight = (int) result.getHeight();
+            dstImg = new WritableImage(result.getPixelReader(), imgWidth, imgHeight);
+            srcImg = result;
+            origImg = result;
+
+            // Reset position to top-left corner
+            imageView.setLayoutX(0);
+            imageView.setLayoutY(0);
+            imageView.setImage(result);
+
+            // Add listener to image loading
+            imageView.imageProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    Platform.runLater(this::resizeImage);
+                }
+            });
+        }
+    }
+
     private void resizeImage() {
         if (imageView.getImage() != null) {
             double containerWidth = imageContainer.getWidth() - 20;
@@ -301,25 +328,46 @@ public class HelloController {
         addMessageInTextArea("Application started successfully.");
     }
 
+    public static Image OpenFileViaExplorer() {
+        try {
+            JFileChooser fileChooser = new JFileChooser("./src/main/resources/com/example/apptestingjavafx/img");
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Image files", "png", "jpg", "jpeg", "bmp", "gif");
+            fileChooser.setFileFilter(filter);
 
-/*                                                MENU ITEM FILTERS                                    */
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                return new Image(selectedFile.toURI().toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading image: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @FXML
+    protected void onRestoreOriginalImage() {
+        if (origImg != null) {
+            imageView.setImage(origImg);
+            System.out.println("Original image restored.");
+        } else {
+            System.out.println("No original image to restore.");
+        }
+    }
 
     @FXML
     protected void onInvertColors() {
-        Image loadedImage = imageView.getImage();
-        if (loadedImage == null) {
+        if (srcImg == null) {
             System.out.println("No image loaded to invert colors.");
             return;
         }
 
-        int width = (int) loadedImage.getWidth();
-        int height = (int) loadedImage.getHeight();
-        WritableImage invertedImage = new WritableImage(width, height);
-
-        var writer = invertedImage.getPixelWriter();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                int argb = loadedImage.getPixelReader().getArgb(x, y);
+        var writer = dstImg.getPixelWriter();
+        var reader = srcImg.getPixelReader();
+        for (int x = 0; x < imgWidth; x++) {
+            for (int y = 0; y < imgHeight; y++) {
+                int argb = reader.getArgb(x, y);
 
                 // Extract color components
                 int alpha = (argb >> 24) & 0xFF;
@@ -338,19 +386,9 @@ public class HelloController {
             }
         }
 
-        imageView.setImage(invertedImage);
+        flushImage();
         addMessageInTextArea("Image colors inverted.");
         System.out.println("Image colors inverted.");
-    }
-
-    @FXML
-    protected void onRestoreOriginalImage() {
-        if (originalImage != null) {
-            imageView.setImage(originalImage);
-            System.out.println("Original image restored.");
-        } else {
-            System.out.println("No original image to restore.");
-        }
     }
 }
 

@@ -27,6 +27,8 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Filters">
                     <items>
+                        <MenuItem mnemonicParsing="false" text="Grayscale" onAction="#onGrayscale" />
+                        <MenuItem mnemonicParsing="false" text="Pixel melt" onAction="#onUngrayscale" />
                         <MenuItem mnemonicParsing="false" onAction="#onInvertColors" text="Invert Colors" />
                         <MenuItem mnemonicParsing="false" text="Delete" />
                     </items>
