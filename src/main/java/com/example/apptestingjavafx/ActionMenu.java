@@ -1,5 +1,6 @@
 package com.example.apptestingjavafx;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
@@ -20,7 +21,7 @@ public class ActionMenu extends Menu {
         setStyle("-fx-padding: 3 8 3 8; -fx-min-height: 25;");
         getStyleClass().add("action-menu");
 
-        parentMenuProperty().addListener((observable, oldMenu, newMenu) -> {
+        parentMenuProperty().addListener((_, _, newMenu) -> {
             if (newMenu != null && newMenu.getParentPopup() != null && !cssApplied) {
                 Scene scene = newMenu.getParentPopup().getScene();
                 if (scene != null) {

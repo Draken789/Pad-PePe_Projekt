@@ -13,35 +13,43 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import com.example.apptestingjavafx.ActionMenu?>
-<?import com.example.apptestingjavafx.ExitMenu?>
+<?import javafx.scene.control.Label?>
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.apptestingjavafx.HelloController">
     <children>
-        <MenuBar>
+        <MenuBar fx:id="menu" viewOrder="-Infinity">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#onSelectImage" text="Load Image" />
-                        <MenuItem mnemonicParsing="false" onAction="#onSaveImage" text="Save Image" />
+                        <MenuItem fx:id="menuSave" disable="true" mnemonicParsing="false" onAction="#onSaveImage" text="Save Image" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Filters">
+                <Menu fx:id="menuFilters" disable="true" mnemonicParsing="false" text="Filters">
                     <items>
                         <MenuItem mnemonicParsing="false" text="Grayscale" onAction="#onGrayscale" />
-                        <MenuItem mnemonicParsing="false" text="Pixel melt" onAction="#onUngrayscale" />
+                        <MenuItem mnemonicParsing="false" text="Pixel melt" onAction="#onPixelmelt" />
+                        <MenuItem mnemonicParsing="false" text="Pixelize" onAction="#onPixelize" />
                         <MenuItem mnemonicParsing="false" onAction="#onInvertColors" text="Invert Colors" />
                         <MenuItem mnemonicParsing="false" text="Delete" />
                     </items>
                 </Menu>
-                <ActionMenu mnemonicParsing="false" text="About" onMenuAction="#onAboutClick" />
-                <ActionMenu mnemonicParsing="false" text="Exit" onMenuAction="#onExitClick" />
+                <Menu mnemonicParsing="false" style="-fx-padding: 0;">
+                    <graphic>
+                        <Label style="-fx-padding: 0.49em 0.5em 0.53em 0.5em;" text="About" onMouseClicked="#onAboutClick" />
+                    </graphic>
+                </Menu>
+                <Menu mnemonicParsing="false" style="-fx-padding: 0;">
+                    <graphic>
+                        <Label style="-fx-padding: 0.49em 0.5em 0.53em 0.5em;" text="Exit" onMouseClicked="#onExitClick" />
+                    </graphic>
+                </Menu>
             </menus>
         </MenuBar>
         <BorderPane VBox.vgrow="ALWAYS">
             <center>
-                <Pane fx:id="imageContainer" style="-fx-background-color: #F5F5F5;" BorderPane.alignment="CENTER">
+                <Pane fx:id="imageContainer" style="-fx-background-color: #F5F5F5;" BorderPane.alignment="CENTER" onMouseDragged="#onImageDrag" onMousePressed="#onImageDragStart" onMouseReleased="#onImageDragStop" onScroll="#onScroll">
                     <children>
-                        <ImageView fx:id="imageView" onMouseDragged="#onImageDrag" onMousePressed="#onImageDragStart" onMouseReleased="#onImageDragStop" preserveRatio="true" />
+                        <ImageView fx:id="imageView" preserveRatio="true" />
                     </children>
                 </Pane>
             </center>
@@ -76,24 +84,24 @@
                                 <Insets bottom="5.0" />
                             </VBox.margin>
                         </TextArea>
-                        <Button maxWidth="Infinity" mnemonicParsing="false" text="Generate Image">
+                        <Button maxWidth="Infinity" mnemonicParsing="false" text="Generate Image" onAction="#onRandomImage">
                             <VBox.margin>
                                 <Insets bottom="5.0" />
                             </VBox.margin>
                         </Button>
-                        <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#onRestoreOriginalImage" text="Restore Original Image">
+                        <Button fx:id="restoreImgBtn" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onRestoreOriginalImage" text="Restore Original Image">
                             <VBox.margin>
                                 <Insets bottom="10.0" />
                             </VBox.margin>
                         </Button>
-                        <VBox spacing="5.0">
+                        <VBox fx:id="radioVBox" disable="true" spacing="5.0">
                             <children>
-                                <RadioButton mnemonicParsing="false" selected="true" text="Original Image">
+                                <RadioButton mnemonicParsing="false" text="Original Image" onAction="#onRadioOriginal">
                                     <toggleGroup>
-                                        <ToggleGroup fx:id="radioImageOptions" />
+                                        <ToggleGroup fx:id="radioImageOptions"/>
                                     </toggleGroup>
                                 </RadioButton>
-                                <RadioButton mnemonicParsing="false" text="Modified Image" toggleGroup="$radioImageOptions" />
+                                <RadioButton fx:id="radioModified" mnemonicParsing="false" text="Modified Image" selected="true" toggleGroup="$radioImageOptions" onAction="#onRadioModified"/>
                             </children>
                         </VBox>
                     </children>
