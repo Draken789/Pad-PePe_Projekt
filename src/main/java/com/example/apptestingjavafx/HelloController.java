@@ -486,17 +486,44 @@ public class HelloController {
     protected void onSaveImage() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Image");
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
-        fileChooser.getExtensionFilters().add(extFilter);
+
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png"),
+                new FileChooser.ExtensionFilter("JPEG files (*.jpg, *.jpeg)", "*.jpg", "*.jpeg"),
+                new FileChooser.ExtensionFilter("BMP files (*.bmp)", "*.bmp"),
+                new FileChooser.ExtensionFilter("All Images", "*.png", "*.jpg", "*.jpeg", "*.bmp")
+        );
+
         File file = fileChooser.showSaveDialog(null);
 
         if (file != null) {
             try {
                 Image imageToBeSaved = srcImg;
-
                 BufferedImage bufferedImage = javafx.embed.swing.SwingFXUtils.fromFXImage(imageToBeSaved, null);
 
-                ImageIO.write(bufferedImage, "png", file);
+                String fileName = file.getName().toLowerCase();
+                String formatName;
+
+                if (fileName.endsWith(".png")) {
+                    formatName = "png";
+                } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+                    formatName = "jpg";
+
+                    // for jpeg, remove alpha channel so there's no invisibility
+                    BufferedImage newBufferedImage = new BufferedImage(
+                            bufferedImage.getWidth(),
+                            bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_RGB
+                    );
+                    newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, null);
+                    bufferedImage = newBufferedImage;
+                } else if (fileName.endsWith(".bmp")) {
+                    formatName = "bmp";
+                } else {
+                    formatName = "png"; //default
+                }
+
+                ImageIO.write(bufferedImage, formatName, file);
 
                 System.out.println("Image saved successfully to " + file.getAbsolutePath());
                 log("Image saved.");
