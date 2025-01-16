@@ -94,6 +94,11 @@
                                 <Insets bottom="10.0" />
                             </VBox.margin>
                         </Button>
+                        <Button fx:id="rotateButton" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onRotateImage" text="Rotate Image">
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </Button>
                         <VBox fx:id="radioVBox" disable="true" spacing="5.0">
                             <children>
                                 <RadioButton mnemonicParsing="false" text="Original Image" onAction="#onRadioOriginal">

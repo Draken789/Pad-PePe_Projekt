@@ -58,6 +58,9 @@ public class HelloController {
     @FXML
     private TextArea messagesTextArea;
 
+    @FXML
+    private Button rotateButton;
+
     // ============================================== //
     //             Application lifecycle              //
     // ============================================== //
@@ -95,9 +98,13 @@ public class HelloController {
         imgHeight = (int) img.getHeight();
         dstImg = new WritableImage(imgWidth, imgHeight);
         srcImg = img;
-        origImg = img;
+
+        if (origImg == null) {
+            origImg = img;
+        }
 
         imageView.setImage(img);
+        imageView.setRotate(0);
         resizeImage();
 
         showOrig = false;
@@ -120,6 +127,7 @@ public class HelloController {
         menuFilters.setDisable(inv);
         menuSave.setDisable(inv);
         radioVBox.setDisable(inv);
+        rotateButton.setDisable(inv);
     }
 
     private void setScale(double factor) {
@@ -533,6 +541,47 @@ public class HelloController {
             }
         }
     }
+
+    @FXML
+    protected void onRotateImage() {
+        if (noImg()) return;
+
+        // Zapamatujeme si aktuální pozici
+        double currentX = imageView.getLayoutX();
+        double currentY = imageView.getLayoutY();
+        double currentScale = imageView.getScaleX();
+
+        WritableImage rotatedImage = new WritableImage(imgHeight, imgWidth);
+        PixelWriter writer = rotatedImage.getPixelWriter();
+        PixelReader reader = srcImg.getPixelReader();
+
+        for (int x = 0; x < imgWidth; x++) {
+            for (int y = 0; y < imgHeight; y++) {
+                int newX = imgHeight - 1 - y;
+                int newY = x;
+                Color color = reader.getColor(x, y);
+                writer.setColor(newX, newY, color);
+            }
+        }
+
+        int temp = imgWidth;
+        imgWidth = imgHeight;
+        imgHeight = temp;
+
+        dstImg = rotatedImage;
+        flushImage();
+        resetToImg(srcImg);
+
+        // Obnovíme pozici a scale po rotaci
+        imageView.setLayoutX(currentX);
+        imageView.setLayoutY(currentY);
+        imageView.setScaleX(currentScale);
+        imageView.setScaleY(currentScale);
+        scale = Math.log(currentScale) / Math.log(2) * 8; // Aktualizujeme scale proměnnou
+
+        log("Rotated image by 90 degrees");
+    }
+
 
     @FXML
     protected void onSelectImage() {
