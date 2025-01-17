@@ -74,6 +74,11 @@
                                 <Insets bottom="5.0" />
                             </VBox.margin>
                         </Button>
+                        <Button text="Toggle Eraser" onAction="#toggleEraser">
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </Button>
                         <Button maxWidth="Infinity" mnemonicParsing="false" text="Edit Matrix">
                             <VBox.margin>
                                 <Insets bottom="5.0" />

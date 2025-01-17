@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jlink" name="unnamed">
+    <output-path>$PROJECT_DIR$/mods/artifacts/unnamed</output-path>
+    <root id="root">
+      <element id="module-output" name="appTestingJavaFX" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-base:17.0.6" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-base:win:17.0.6" />
+      <element id="library" level="project" name="Maven: org.openjfx:javafx-fxml:win:17.0.6" />
+    </root>
+  </artifact>
+</component>

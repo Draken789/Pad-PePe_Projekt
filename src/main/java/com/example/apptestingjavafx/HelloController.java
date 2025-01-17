@@ -79,8 +79,8 @@ public class HelloController {
     private Button rotateButton;
 
     // ============================================== //
-    //             Application lifecycle              //
-    // ============================================== //
+//             Application lifecycle              //
+// ============================================== //
 
     public void initialize() {
         messageHistory = new ArrayList<>();
@@ -91,9 +91,12 @@ public class HelloController {
         drawingCanvas.widthProperty().addListener((obs, oldVal, newVal) -> clearCanvas());
         drawingCanvas.heightProperty().addListener((obs, oldVal, newVal) -> clearCanvas());
     }
-    // ============================================== //
-    //                     Drawing                    //
-    // ============================================== //
+
+// ============================================== //
+//                     Drawing                    //
+// ============================================== //
+
+    private boolean isEraserMode = false; // Track if eraser mode is active
 
     // Add the ability to toggle drawing mode
     @FXML
@@ -109,6 +112,17 @@ public class HelloController {
         }
     }
 
+    // Toggle eraser mode
+    @FXML
+    protected void toggleEraser(ActionEvent event) {
+        isEraserMode = !isEraserMode;
+        if (isEraserMode) {
+            log("Eraser mode enabled.");
+        } else {
+            log("Eraser mode disabled.");
+        }
+    }
+
     // Mouse events to draw
     @FXML
     protected void onCanvasMousePressed(MouseEvent event) {
@@ -120,14 +134,24 @@ public class HelloController {
     @FXML
     protected void onCanvasMouseDragged(MouseEvent event) {
         if (!isDrawing) return;
+
         double endX = event.getX();
         double endY = event.getY();
 
         // Get the GraphicsContext of the canvas
         GraphicsContext gc = drawingCanvas.getGraphicsContext2D();
-        gc.setStroke(Color.BLACK); // Set color of the drawing
-        gc.setLineWidth(3); // Set line width
-        gc.strokeLine(startX, startY, endX, endY); // Draw a line
+
+        if (isEraserMode) {
+            // Eraser logic: Clear the line by setting it to the background color
+            gc.setStroke(Color.TRANSPARENT); // Set the stroke color to transparent
+            gc.setLineWidth(20); // Set a thicker line width for the eraser
+            gc.clearRect(endX - 10, endY - 10, 20, 20); // Clear a small rectangular area
+        } else {
+            // Drawing logic
+            gc.setStroke(Color.BLACK); // Set color of the drawing
+            gc.setLineWidth(3); // Set line width
+            gc.strokeLine(startX, startY, endX, endY); // Draw a line
+        }
 
         // Update the start coordinates for the next line
         startX = endX;
@@ -136,9 +160,8 @@ public class HelloController {
 
     @FXML
     protected void onCanvasMouseReleased(MouseEvent event) {
-        // Handle any cleanup after drawing
         if (isDrawing) {
-            log("Finished drawing.");
+            log(isEraserMode ? "Finished erasing." : "Finished drawing.");
         }
     }
 
@@ -266,20 +289,6 @@ public class HelloController {
 
         double newX = originalX + deltaX;
         double newY = originalY + deltaY;
-
-        /*
-        // Get container boundaries
-        double containerWidth = imageContainer.getWidth();
-        double containerHeight = imageContainer.getHeight();
-
-        // Get image dimensions
-        double imageWidth = imageView.getFitWidth();
-        double imageHeight = imageView.getFitHeight();
-
-        // Constrain movement within container bounds
-        newX = Math.max(0, Math.min(newX, containerWidth - imageWidth));
-        newY = Math.max(0, Math.min(newY, containerHeight - imageHeight));
-         */
 
         imageView.setLayoutX(newX);
         imageView.setLayoutY(newY);
