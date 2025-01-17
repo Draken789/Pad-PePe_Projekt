@@ -12,8 +12,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Label?>
+
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.apptestingjavafx.HelloController">
     <children>
         <MenuBar fx:id="menu" viewOrder="-Infinity">
@@ -30,6 +31,7 @@
                         <MenuItem mnemonicParsing="false" text="Pixel melt" onAction="#onPixelmelt" />
                         <MenuItem mnemonicParsing="false" text="Pixelize" onAction="#onPixelize" />
                         <MenuItem mnemonicParsing="false" onAction="#onInvertColors" text="Invert Colors" />
+                        <MenuItem mnemonicParsing="false" text="Black and White" onAction="#onBlackAndWhite" />
                         <MenuItem mnemonicParsing="false" text="Delete" />
                     </items>
                 </Menu>
@@ -50,6 +52,9 @@
                 <Pane fx:id="imageContainer" style="-fx-background-color: #F5F5F5;" BorderPane.alignment="CENTER" onMouseDragged="#onImageDrag" onMousePressed="#onImageDragStart" onMouseReleased="#onImageDragStop" onScroll="#onScroll">
                     <children>
                         <ImageView fx:id="imageView" preserveRatio="true" />
+                        <!-- Add the Canvas for drawing -->
+                        <Canvas fx:id="drawingCanvas" onMousePressed="#onCanvasMousePressed" onMouseDragged="#onCanvasMouseDragged" onMouseReleased="#onCanvasMouseReleased" />
+                        <!--<Canvas fx:id="drawingCanvas" width="500" height="500" />-->
                     </children>
                 </Pane>
             </center>
@@ -60,6 +65,11 @@
                     </padding>
                     <children>
                         <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#onSelectImage" text="Select Image File">
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#toggleDrawing" text="Toggle Drawing">
                             <VBox.margin>
                                 <Insets bottom="5.0" />
                             </VBox.margin>

@@ -5,6 +5,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.scene.control.*;
@@ -14,6 +21,8 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+
+import java.awt.*;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,6 +33,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Optional;
+import javafx.scene.canvas.Canvas;
 
 
 public class HelloController {
@@ -58,13 +68,85 @@ public class HelloController {
     @FXML
     private TextArea messagesTextArea;
 
-    // ============================================== //
-    //             Application lifecycle              //
-    // ============================================== //
+    // Canvas for drawing
+    @FXML
+    private Canvas drawingCanvas;
+
+    // Drawing state variables
+    private boolean isDrawing = false;
+    private double startX, startY;
 
     public void initialize() {
         messageHistory = new ArrayList<>();
+        drawingCanvas.setVisible(false); // Initially hidden
+        drawingCanvas.widthProperty().bind(imageContainer.widthProperty());
+        drawingCanvas.heightProperty().bind(imageContainer.heightProperty());
+
+        drawingCanvas.widthProperty().addListener((obs, oldVal, newVal) -> clearCanvas());
+        drawingCanvas.heightProperty().addListener((obs, oldVal, newVal) -> clearCanvas());
     }
+
+    // Add the ability to toggle drawing mode
+    @FXML
+    protected void toggleDrawing(ActionEvent event) {
+        isDrawing = !isDrawing;
+        drawingCanvas.setVisible(isDrawing);
+        if (isDrawing) {
+            drawingCanvas.setViewOrder(-100);
+            log("Drawing mode enabled.");
+        } else {
+            log("Drawing mode disabled.");
+            drawingCanvas.setViewOrder(0);
+        }
+    }
+
+    // Mouse events to draw
+    @FXML
+    protected void onCanvasMousePressed(MouseEvent event) {
+        if (!isDrawing) return;
+        startX = event.getX();
+        startY = event.getY();
+    }
+
+    @FXML
+    protected void onCanvasMouseDragged(MouseEvent event) {
+        if (!isDrawing) return;
+        double endX = event.getX();
+        double endY = event.getY();
+
+        // Get the GraphicsContext of the canvas
+        GraphicsContext gc = drawingCanvas.getGraphicsContext2D();
+        gc.setStroke(Color.BLACK); // Set color of the drawing
+        gc.setLineWidth(3); // Set line width
+        gc.strokeLine(startX, startY, endX, endY); // Draw a line
+
+        // Update the start coordinates for the next line
+        startX = endX;
+        startY = endY;
+    }
+
+    @FXML
+    protected void onCanvasMouseReleased(MouseEvent event) {
+        // Handle any cleanup after drawing
+        if (isDrawing) {
+            log("Finished drawing.");
+        }
+    }
+
+    @FXML
+    protected void onClearCanvas(ActionEvent event) {
+        GraphicsContext gc = drawingCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, drawingCanvas.getWidth(), drawingCanvas.getHeight());
+        log("Canvas cleared.");
+    }
+
+    private void clearCanvas() {
+        GraphicsContext gc = drawingCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, drawingCanvas.getWidth(), drawingCanvas.getHeight());
+    }
+
+
+
 
     // ============================================== //
     //            Image data manipulation             //
@@ -163,7 +245,7 @@ public class HelloController {
 
     @FXML
     protected void onImageDrag(MouseEvent event) {
-        if (!isDragging) return;
+        if (!isDragging || isDrawing) return;
 
         double deltaX = event.getSceneX() - dragStartX;
         double deltaY = event.getSceneY() - dragStartY;
@@ -191,6 +273,7 @@ public class HelloController {
 
     @FXML
     protected void onImageDragStart(MouseEvent event) {
+        if (isDrawing) return;
         if (origImg == null) return;
         if (!event.isPrimaryButtonDown()) return;
 
@@ -273,6 +356,8 @@ public class HelloController {
         showError("A fatal error has occurred and the application can no longer run", ex);
         System.exit(1);
     }
+
+
 
     // ============================================== //
     //                    Filters                     //
@@ -418,6 +503,37 @@ public class HelloController {
 
         flushImage();
         log("Applied color invert filter.");
+
+    }
+    @FXML
+    protected void onBlackAndWhite() {
+        if (noImg()) return;
+
+        var pr = srcImg.getPixelReader();
+        var pw = dstImg.getPixelWriter();
+
+        for (int x = 0; x < imgWidth; x++) {
+            for (int y = 0; y < imgHeight; y++) {
+                int argb = pr.getArgb(x, y);
+                int a = (argb >> 24) & 0xFF; // Extract alpha channel
+                int r = (argb >> 16) & 0xFF; // Extract red channel
+                int g = (argb >> 8) & 0xFF;  // Extract green channel
+                int b = argb & 0xFF;         // Extract blue channel
+
+                // Calculate brightness
+                int brightness = (int) (0.21 * r + 0.71 * g + 0.07 * b);
+
+                // Threshold to determine black or white
+                int bwColor = (brightness < 128) ? 0 : 255;
+
+                // Set the pixel to black or white
+                int bwArgb = (a << 24) | (bwColor << 16) | (bwColor << 8) | bwColor;
+                pw.setArgb(x, y, bwArgb);
+            }
+        }
+
+        flushImage();
+        log("Applied black-and-white filter.");
     }
 
     // ============================================== //
@@ -549,10 +665,28 @@ public class HelloController {
 
     @FXML
     protected void onRestoreOriginalImage() {
-        if (noImg()) return;
-        resetToImg(origImg);
-        log("Restored original.");
+        if (noImg()) return;  // Check if no image exists
+
+        // Store the current drawing state
+        boolean wasDrawing = isDrawing;
+
+        // Restore the original image
+        resetToImg(origImg);  // Restore the original image
+
+        // If drawing mode is enabled, clear the canvas and restore the original image
+        if (wasDrawing) {
+            // Clear the canvas to erase any drawings
+            clearCanvas();
+
+            // Ensure the canvas is still visible and active
+            drawingCanvas.setVisible(true);
+            drawingCanvas.setViewOrder(-100);  // Ensure it's on top if necessary
+            log("Restored original image and cleared drawings.");
+        } else {
+            log("Restored original image.");
+        }
     }
+
 
     @FXML
     protected void onRandomImage() {
