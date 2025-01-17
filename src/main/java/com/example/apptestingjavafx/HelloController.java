@@ -91,6 +91,9 @@ public class HelloController {
         drawingCanvas.widthProperty().addListener((obs, oldVal, newVal) -> clearCanvas());
         drawingCanvas.heightProperty().addListener((obs, oldVal, newVal) -> clearCanvas());
     }
+    // ============================================== //
+    //                     Drawing                    //
+    // ============================================== //
 
     // Add the ability to toggle drawing mode
     @FXML
